@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { router } from 'expo-router';
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8080';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://10.0.0.7:8080';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -11,14 +11,26 @@ export const apiClient = axios.create({
   },
 });
 
+// Request interceptor for logging
+apiClient.interceptors.request.use(
+  (config) => {
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
-    
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      
+
       try {
         await apiClient.post('/auth/refresh');
         return apiClient(originalRequest);
@@ -27,7 +39,7 @@ apiClient.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-    
+
     return Promise.reject(error);
   }
 );
