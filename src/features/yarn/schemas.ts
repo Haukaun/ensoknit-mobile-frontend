@@ -19,7 +19,7 @@ export const yarnFormSchema = z.object({
     .regex(/^#([0-9A-Fa-f]{3}){1,2}$/, 'Must be a valid hex color (e.g., #FF5733)')
     .optional()
     .or(z.literal('')),
-  category: z.enum(YARN_CATEGORIES, { required_error: 'Category is required' }),
+  category: z.enum(YARN_CATEGORIES),
   weightInGrams: z.coerce.number().positive('Must be positive').optional().or(z.literal('')),
   lengthInMeters: z.coerce.number().positive('Must be positive').optional().or(z.literal('')),
   fiberContent: z.string().max(200, 'Fiber content must be 200 characters or less').optional(),

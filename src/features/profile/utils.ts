@@ -1,0 +1,17 @@
+/**
+ * Extracts initials from a full name.
+ * Takes the first character of each word, uppercase, max 2 characters.
+ * 
+ * @example
+ * getInitials("John Doe") // "JD"
+ * getInitials("Alice Bob Charlie") // "AB"
+ * getInitials("Single") // "S"
+ */
+export function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+}

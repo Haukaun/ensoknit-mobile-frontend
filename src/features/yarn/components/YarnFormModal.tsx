@@ -80,11 +80,11 @@ export function YarnFormModal({ visible, onClose, yarn }: YarnFormModalProps) {
   const handleSubmit = async () => {
     setErrors({});
 
-    const formData: YarnFormData = {
+    const formData = {
       name,
       brand: brand || undefined,
       color: color || undefined,
-      category: category as YarnFormData['category'],
+      category,
       weightInGrams: weightInGrams || undefined,
       lengthInMeters: lengthInMeters || undefined,
       fiberContent: fiberContent || undefined,

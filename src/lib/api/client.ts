@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { router } from 'expo-router';
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://10.0.0.7:8080';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://10.0.0.9:8080';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,

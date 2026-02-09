@@ -9,12 +9,6 @@ export interface YarnFilters {
 }
 
 export const yarnApi = {
-  getAllForUser: async (filters?: YarnFilters) => {
-    const { data } = await apiClient.get<YarnResponse[]>('/api/yarn', { params: filters });
-    return data;
-  },
-
-  // Alias for backwards compatibility with queries.ts
   getAll: async (filters?: YarnFilters) => {
     const { data } = await apiClient.get<YarnResponse[]>('/api/yarn', { params: filters });
     return data;
