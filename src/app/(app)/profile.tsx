@@ -1,6 +1,8 @@
-// ensoknit-mobile-frontend/src/app/(app)/profile.tsx
 import { Text } from '@/components/ui/text';
 import { useAuth } from '@/features/auth/context';
+import { YarnDetailsModal, YarnFormModal, YarnGrid } from '@/features/yarn/components';
+import { useGetYarns } from '@/features/yarn/queries';
+import type { YarnResponse } from '@/features/yarn/types';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
@@ -18,8 +20,13 @@ function getInitials(name: string): string {
 }
 
 function ProfileHeader({ user }: { user: { fullName: string; email: string } }) {
-  // TODO: Replace with real stats from API
-  const stats = { yarns: 0, patterns: 0, projects: 0 };
+  const { data: yarns } = useGetYarns();
+  
+  const stats = { 
+    yarns: yarns?.length || 0, 
+    patterns: 0, 
+    projects: 0 
+  };
 
   return (
     <View className="items-center px-4 pb-4 pt-6">
@@ -94,10 +101,58 @@ function ProfileTabs({
 }
 
 function YarnTabContent() {
-  // Placeholder - will be implemented in Task 3
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedYarn, setSelectedYarn] = useState<YarnResponse | null>(null);
+  const [editingYarn, setEditingYarn] = useState<YarnResponse | undefined>(undefined);
+
+  const handleYarnPress = (yarn: YarnResponse) => {
+    setSelectedYarn(yarn);
+  };
+
+  const handleEditYarn = (yarn: YarnResponse) => {
+    setSelectedYarn(null);
+    setEditingYarn(yarn);
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedYarn(null);
+  };
+
+  const handleCloseForm = () => {
+    setShowCreateModal(false);
+    setEditingYarn(undefined);
+  };
+
   return (
-    <View className="flex-1 items-center justify-center p-4">
-      <Text className="text-muted-foreground">Yarn content coming soon...</Text>
+    <View className="flex-1">
+      <YarnGrid
+        onYarnPress={handleYarnPress}
+        onAddYarn={() => setShowCreateModal(true)}
+      />
+
+      {/* FAB - Floating Action Button */}
+      <Pressable
+        className="bg-primary absolute bottom-4 right-4 h-14 w-14 items-center justify-center rounded-full shadow-lg active:opacity-80"
+        onPress={() => setShowCreateModal(true)}
+        accessibilityLabel="Add new yarn"
+        accessibilityRole="button">
+        <Ionicons name="add" size={28} color="white" />
+      </Pressable>
+
+      {/* Yarn Details Modal */}
+      <YarnDetailsModal
+        yarn={selectedYarn}
+        visible={!!selectedYarn}
+        onClose={handleCloseDetails}
+        onEdit={handleEditYarn}
+      />
+
+      {/* Create/Edit Yarn Modal */}
+      <YarnFormModal
+        visible={showCreateModal || !!editingYarn}
+        onClose={handleCloseForm}
+        yarn={editingYarn}
+      />
     </View>
   );
 }
