@@ -1,12 +1,10 @@
 import { Text } from '@/components/ui/text';
 import { useAuth } from '@/features/auth/context';
-import {
-  PatternsTabContent,
-  ProfileHeader,
-  ProfileTabs,
-  ProjectsTabContent,
-  YarnTabContent,
-} from '@/features/profile/components';
+import { PatternsTabContent } from '@/features/profile/components/PatternsTabContent';
+import { ProfileHeader } from '@/features/profile/components/ProfileHeader';
+import { ProfileTabs } from '@/features/profile/components/ProfileTabs';
+import { ProjectsTabContent } from '@/features/profile/components/ProjectsTabContent';
+import { YarnTabContent } from '@/features/profile/components/YarnTabContent';
 import type { ProfileTab } from '@/features/profile/types';
 import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
@@ -26,11 +24,8 @@ export default function ProfileScreen() {
   }
 
   return (
-    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
-      <ScrollView
-        className="flex-1"
-        stickyHeaderIndices={[1]}
-        showsVerticalScrollIndicator={false}>
+    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+      <ScrollView className="flex-1" stickyHeaderIndices={[1]} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <ProfileHeader user={user} />
 
