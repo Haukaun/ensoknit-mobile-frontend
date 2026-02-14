@@ -1,17 +1,17 @@
 {
   "expo": {
-    "name": "ensoknit-mobile-frontend",
-    "slug": "ensoknit-mobile-frontend",
+    "name": "StashWise",
+    "slug": "stashwise",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
-    "scheme": "ensoknit-mobile-frontend",
+    "scheme": "stashwise",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./src/assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#fff7ee"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -21,7 +21,7 @@
       "edgeToEdgeEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#fff7ee"
       }
     },
     "web": {
@@ -35,7 +35,7 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow Ensoknit to access your camera to scan yarn labels."
+          "cameraPermission": "Allow StashWise to access your camera to scan yarn labels."
         }
       ]
     ],
