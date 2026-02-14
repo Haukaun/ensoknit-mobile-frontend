@@ -43,19 +43,10 @@ export function YarnTabContent() {
       </Pressable>
 
       {/* Yarn Details Modal */}
-      <YarnDetailsModal
-        yarn={selectedYarn}
-        visible={!!selectedYarn}
-        onClose={handleCloseDetails}
-        onEdit={handleEditYarn}
-      />
+      <YarnDetailsModal yarn={selectedYarn} visible={!!selectedYarn} onClose={handleCloseDetails} onEdit={handleEditYarn} />
 
       {/* Create/Edit Yarn Modal */}
-      <YarnFormModal
-        visible={showCreateModal || !!editingYarn}
-        onClose={handleCloseForm}
-        yarn={editingYarn}
-      />
+      <YarnFormModal visible={showCreateModal || !!editingYarn} onClose={handleCloseForm} yarn={editingYarn} />
     </View>
   );
 }

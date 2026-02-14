@@ -4,17 +4,10 @@ import { Label } from '@/components/ui/label';
 import { Text } from '@/components/ui/text';
 import { Ionicons } from '@expo/vector-icons';
 import { useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  Modal,
-  Pressable,
-  ScrollView,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Modal, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCreateYarn, useUpdateYarn } from '../mutations';
-import { YARN_CATEGORIES, yarnFormSchema, type YarnFormData } from '../schemas';
+import { YARN_CATEGORIES, yarnFormSchema } from '../schemas';
 import type { YarnRequest, YarnResponse } from '../types';
 
 interface YarnFormModalProps {
@@ -24,7 +17,10 @@ interface YarnFormModalProps {
 }
 
 function formatCategoryLabel(category: string): string {
-  return category.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
+  return category
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
 export function YarnFormModal({ visible, onClose, yarn }: YarnFormModalProps) {
@@ -134,24 +130,16 @@ export function YarnFormModal({ visible, onClose, yarn }: YarnFormModalProps) {
   };
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      presentationStyle="pageSheet"
-      onRequestClose={handleClose}>
-      <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
+    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={handleClose}>
+      <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
         {/* Header */}
-        <View className="border-border flex-row items-center justify-between border-b px-4 py-3">
+        <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
           <Pressable onPress={handleClose} className="p-2" disabled={isPending}>
             <Ionicons name="close" size={24} color={isPending ? '#9ca3af' : '#374151'} />
           </Pressable>
           <Text className="text-lg font-semibold">{isEditing ? 'Edit Yarn' : 'Add Yarn'}</Text>
           <Pressable onPress={handleSubmit} className="p-2" disabled={isPending}>
-            {isPending ? (
-              <ActivityIndicator size="small" />
-            ) : (
-              <Text className="text-primary font-semibold">Save</Text>
-            )}
+            {isPending ? <ActivityIndicator size="small" /> : <Text className="font-semibold text-primary">Save</Text>}
           </Pressable>
         </View>
 
@@ -211,10 +199,7 @@ export function YarnFormModal({ visible, onClose, yarn }: YarnFormModalProps) {
                 className={`flex-1 ${errors.color ? 'border-destructive' : ''}`}
               />
               {color && /^#([0-9A-Fa-f]{3}){1,2}$/.test(color) && (
-                <View
-                  className="h-10 w-10 rounded-md border border-border"
-                  style={{ backgroundColor: color }}
-                />
+                <View className="h-10 w-10 rounded-md border border-border" style={{ backgroundColor: color }} />
               )}
             </View>
             {errors.color && (
@@ -228,7 +213,7 @@ export function YarnFormModal({ visible, onClose, yarn }: YarnFormModalProps) {
           <View className="mb-4 gap-1.5">
             <Label>Category *</Label>
             <Pressable
-              className="border-input bg-background h-10 flex-row items-center justify-between rounded-md border px-3"
+              className="h-10 flex-row items-center justify-between rounded-md border border-input bg-background px-3"
               onPress={() => setShowCategoryPicker(true)}
               disabled={isPending}>
               <Text>{formatCategoryLabel(category)}</Text>
@@ -333,31 +318,21 @@ export function YarnFormModal({ visible, onClose, yarn }: YarnFormModalProps) {
 
           {/* Submit Error */}
           {errors.submit && (
-            <Text variant="small" className="text-destructive mb-4 text-center">
+            <Text variant="small" className="mb-4 text-center text-destructive">
               {errors.submit}
             </Text>
           )}
 
           {/* Submit Button */}
           <Button className="mb-8 w-full" onPress={handleSubmit} disabled={isPending}>
-            {isPending ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <Text>{isEditing ? 'Update Yarn' : 'Add Yarn'}</Text>
-            )}
+            {isPending ? <ActivityIndicator size="small" color="white" /> : <Text>{isEditing ? 'Update Yarn' : 'Add Yarn'}</Text>}
           </Button>
         </ScrollView>
 
         {/* Category Picker Modal */}
-        <Modal
-          visible={showCategoryPicker}
-          animationType="fade"
-          transparent
-          onRequestClose={() => setShowCategoryPicker(false)}>
-          <Pressable
-            className="flex-1 items-center justify-center bg-black/50"
-            onPress={() => setShowCategoryPicker(false)}>
-            <View className="bg-background m-4 w-full max-w-sm rounded-lg p-4">
+        <Modal visible={showCategoryPicker} animationType="fade" transparent onRequestClose={() => setShowCategoryPicker(false)}>
+          <Pressable className="flex-1 items-center justify-center bg-black/50" onPress={() => setShowCategoryPicker(false)}>
+            <View className="m-4 w-full max-w-sm rounded-lg bg-background p-4">
               <Text className="mb-4 text-center text-lg font-semibold">Select Category</Text>
               {YARN_CATEGORIES.map((cat) => (
                 <Pressable
@@ -367,9 +342,7 @@ export function YarnFormModal({ visible, onClose, yarn }: YarnFormModalProps) {
                     setCategory(cat);
                     setShowCategoryPicker(false);
                   }}>
-                  <Text className={category === cat ? 'text-primary font-semibold' : ''}>
-                    {formatCategoryLabel(cat)}
-                  </Text>
+                  <Text className={category === cat ? 'font-semibold text-primary' : ''}>{formatCategoryLabel(cat)}</Text>
                 </Pressable>
               ))}
             </View>

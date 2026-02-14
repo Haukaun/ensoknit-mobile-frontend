@@ -2,32 +2,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Text } from '@/components/ui/text';
+import { parseYarnLabel } from '@/lib/vision-api';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-// Mock function for parsing yarn label
-// TODO: Replace with actual Google Cloud Vision API call
-const parseYarnLabel = async (base64Image: string) => {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-
-  // Return mock data
-  return {
-    name: 'Red Heart Super Saver',
-    material: '100% Acrylic',
-    weight: '198g',
-    length: '333m',
-  };
-};
 
 export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -40,6 +19,7 @@ export default function CameraScreen() {
   const [material, setMaterial] = useState('');
   const [weight, setWeight] = useState('');
   const [length, setLength] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   if (!permission) {
     return <View className="flex-1 bg-black" />;
@@ -48,9 +28,7 @@ export default function CameraScreen() {
   if (!permission.granted) {
     return (
       <View className="flex-1 items-center justify-center bg-black p-4">
-        <Text className="mb-4 text-center text-white">
-          We need your permission to show the camera
-        </Text>
+        <Text className="mb-4 text-center text-white">We need your permission to show the camera</Text>
         <Button onPress={requestPermission}>
           <Text>Grant Permission</Text>
         </Button>
@@ -61,23 +39,34 @@ export default function CameraScreen() {
   const takePicture = async () => {
     if (cameraRef.current) {
       setLoading(true);
+      setError(null);
       try {
         const photo = await cameraRef.current.takePictureAsync({
           base64: true,
-          quality: 0.5,
+          quality: 0.7,
         });
 
         if (photo?.base64) {
-          const data = await parseYarnLabel(photo.base64);
-          setYarnName(data.name);
-          setMaterial(data.material);
-          setWeight(data.weight);
-          setLength(data.length);
+          try {
+            const data = await parseYarnLabel(photo.base64);
+            setYarnName(data.name);
+            setMaterial(data.material);
+            setWeight(data.weight);
+            setLength(data.length);
+            setPhoto(photo?.uri || null);
+          } catch (visionError) {
+            // If Vision API fails, still show the photo with empty fields
+            console.error('Vision API error:', visionError);
+            setError(visionError instanceof Error ? visionError.message : 'Failed to extract text from image');
+            setPhoto(photo?.uri || null);
+            Alert.alert('Text Detection Failed', 'Could not extract text from the image. You can still manually enter the yarn details.', [
+              { text: 'OK' },
+            ]);
+          }
         }
-
-        setPhoto(photo?.uri || null);
       } catch (error) {
         console.error('Failed to take picture:', error);
+        Alert.alert('Camera Error', 'Failed to take picture. Please try again.', [{ text: 'OK' }]);
       } finally {
         setLoading(false);
       }
@@ -90,27 +79,26 @@ export default function CameraScreen() {
     setMaterial('');
     setWeight('');
     setLength('');
+    setError(null);
   };
 
   if (photo) {
     return (
       <SafeAreaView className="flex-1 bg-background">
         <ScrollView contentContainerClassName="p-5">
-          <Image
-            source={{ uri: photo }}
-            className="mb-5 h-[200px] w-full rounded-lg bg-muted"
-            resizeMode="contain"
-          />
+          <Image source={{ uri: photo }} className="mb-5 h-[200px] w-full rounded-lg bg-muted" resizeMode="contain" />
 
           <Text className="mb-5 text-2xl font-bold text-foreground">Scan Results</Text>
 
+          {error && (
+            <View className="mb-4 rounded-md bg-destructive/10 p-3">
+              <Text className="text-sm text-destructive">{error}</Text>
+            </View>
+          )}
+
           <View className="mb-4 gap-1.5">
             <Label>Name / Brand</Label>
-            <Input
-              value={yarnName}
-              onChangeText={setYarnName}
-              placeholder="e.g. Red Heart Super Saver"
-            />
+            <Input value={yarnName} onChangeText={setYarnName} placeholder="e.g. Red Heart Super Saver" />
           </View>
 
           <View className="mb-4 gap-1.5">
@@ -165,18 +153,12 @@ export default function CameraScreen() {
 
         {/* Bottom Overlay */}
         <View className="flex-1 items-center justify-center bg-black/50 pb-10">
-          <Text className="mb-8 text-center text-base font-medium text-white">
-            Align label within the frame
-          </Text>
+          <Text className="mb-8 text-center text-base font-medium text-white">Align label within the frame</Text>
           <TouchableOpacity
             className="h-[70px] w-[70px] items-center justify-center rounded-full bg-white/30"
             onPress={takePicture}
             disabled={loading}>
-            {loading ? (
-              <ActivityIndicator size="large" color="#fff" />
-            ) : (
-              <View className="h-[60px] w-[60px] rounded-full bg-white" />
-            )}
+            {loading ? <ActivityIndicator size="large" color="#fff" /> : <View className="h-[60px] w-[60px] rounded-full bg-white" />}
           </TouchableOpacity>
         </View>
       </View>
