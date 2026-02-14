@@ -1,5 +1,7 @@
 import { Text } from '@/components/ui/text';
+import { themeColors } from '@/lib/theme-colors';
 import { Ionicons } from '@expo/vector-icons';
+import { useColorScheme } from 'nativewind';
 import { Pressable, View } from 'react-native';
 import type { ProfileTab } from '../types';
 
@@ -15,6 +17,9 @@ const TABS: { key: ProfileTab; label: string; icon: keyof typeof Ionicons.glyphM
 ];
 
 export function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps) {
+  const { colorScheme } = useColorScheme();
+  const colors = themeColors[colorScheme ?? 'light'];
+
   return (
     <View className="border-border flex-row border-b bg-background">
       {TABS.map((tab) => (
@@ -25,7 +30,7 @@ export function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps) {
           <Ionicons
             name={tab.icon}
             size={24}
-            color={activeTab === tab.key ? '#6366f1' : '#9ca3af'}
+            color={activeTab === tab.key ? colors.primary : colors.mutedForeground}
           />
           <Text
             className={`mt-1 text-xs ${activeTab === tab.key ? 'font-semibold text-primary' : 'text-muted-foreground'}`}>
